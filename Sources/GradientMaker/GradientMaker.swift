@@ -146,17 +146,17 @@ struct GradientMakerView: View {
     
 }
 
-struct GradientMaker: View {
+public struct GradientMaker: View {
     
     let onUpdate: ([Gradient.Stop]) -> Void
     @State var stops: [Gradient.Stop]
     
-    init(stops: [Gradient.Stop], onUpdate: @escaping ([Gradient.Stop]) -> Void) {
+    public init(stops: [Gradient.Stop], onUpdate: @escaping ([Gradient.Stop]) -> Void) {
         self.stops = stops
         self.onUpdate = onUpdate
     }
 
-    var body: some View {
+    public var body: some View {
         let gradient = Gradient(stops: stops)
         VStack {
 //            let arrStr = stops.map{ "\($0.location)" }
