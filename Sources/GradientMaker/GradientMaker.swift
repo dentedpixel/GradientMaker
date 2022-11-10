@@ -48,13 +48,15 @@ private class ColorPickerChooser {
     
     private var cancellable: AnyCancellable? = nil
     private var pickerView: InternalPicker?
+    private var background: UIView?
     
     private var firstViewController: UIViewController? {
-        let root = ViewUtils.safeKeyWindow?.rootViewController
-        return root?.presentedViewController ?? root?.navigationController?.topViewController
+        guard let root = ViewUtils.safeKeyWindow?.rootViewController else { return nil }
+        return root.presentedViewController ?? root.navigationController?.topViewController
     }
     
-    public func presentColorPicker(color: Color, y: CGFloat, onUpdate: @escaping (Color) -> Void) {
+    public func presentColorPicker(color: Color, offsetY: CGFloat, onUpdate: @escaping (Color) -> Void) {
+        guard pickerView == nil else { closeChooser(); return }
         let picker = InternalPicker()
         self.pickerView = picker
         picker.selectedColor = UIColor(color)
@@ -74,12 +76,35 @@ private class ColorPickerChooser {
         picker.view.translatesAutoresizingMaskIntoConstraints = false
         picker.view.leftAnchor.constraint(equalTo: viewController.view.leftAnchor).isActive = true
         picker.view.rightAnchor.constraint(equalTo: viewController.view.rightAnchor).isActive = true
-        picker.view.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: y).isActive = true
-        picker.view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor).isActive = true
+        picker.view.heightAnchor.constraint(equalToConstant: 650).isActive = true
+        if offsetY > UIScreen.main.bounds.size.height * 0.5 { // below mid-screen
+            picker.view.topAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
+        } else { // above mid-screen
+            picker.view.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: offsetY).isActive = true
+        }
 
         picker.onAppear = {[weak self] view in
             guard let self = self else { return }
+            
+            // background
+            let background = UIView()
+            background.backgroundColor = .black.withAlphaComponent(0.5)
+            viewController.view.insertSubview(background, belowSubview: picker.view)
+
+            background.translatesAutoresizingMaskIntoConstraints = false
+            background.topAnchor.constraint(equalTo: picker.view.topAnchor).isActive = true
+            background.rightAnchor.constraint(equalTo: picker.view.rightAnchor).isActive = true
+            background.leftAnchor.constraint(equalTo: picker.view.leftAnchor).isActive = true
+            background.bottomAnchor.constraint(equalTo: picker.view.bottomAnchor).isActive = true
+            background.isUserInteractionEnabled = true
+            let captureTaps = UITapGestureRecognizer(target: self, action: #selector(self.closeChooser))
+            captureTaps.cancelsTouchesInView = true
+            background.addGestureRecognizer(captureTaps)
+            self.background = background
+                        
             let closeButton = UIButton(type: .close)
+            closeButton.isUserInteractionEnabled = true
+            closeButton.backgroundColor = .white
             closeButton.addTarget(self, action: #selector(self.closeChooser), for: .touchUpInside)
             view.addSubview(closeButton)
 
@@ -95,6 +120,9 @@ private class ColorPickerChooser {
     private func closeChooser() {
         pickerView?.removeFromParent()
         pickerView?.view.removeFromSuperview()
+        pickerView = nil
+        background?.removeFromSuperview()
+        background = nil
     }
 }
 
@@ -136,7 +164,7 @@ struct GradientMakerView: View {
                     }
                 ).onTapGesture {
                     let y = geometry.frame(in: .global).minY
-                    ColorPickerChooser.shared.presentColorPicker(color: stop.color, y: y) { color in
+                    ColorPickerChooser.shared.presentColorPicker(color: stop.color, offsetY: y) { color in
                         stop.color = color
                         onUpdate(stop)
                     }
