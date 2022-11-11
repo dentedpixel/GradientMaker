@@ -21,11 +21,11 @@ enum ViewUtils {
     static func when(hasChild: UIView, timeout: Double = 10.0, onComplete: @escaping (UIView)->Void) {
         guard timeout > 0 else { print("ViewUtils.when(hasChild:) timed out!"); return }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.00001) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .leastNonzeroMagnitude) {
             if let child = hasChild.subviews.first {
                 onComplete(child)
             } else {
-                Self.when(hasChild: hasChild, timeout: timeout - 0.00001, onComplete: onComplete)
+                Self.when(hasChild: hasChild, timeout: timeout - .leastNonzeroMagnitude, onComplete: onComplete)
             }
         }
     }
@@ -33,31 +33,20 @@ enum ViewUtils {
 
 private class ColorPickerChooser {
     
-    private class InternalPicker: UIColorPickerViewController {
-        
-        var onAppear: ((UIView)-> Void)?
-        
-        override func viewDidAppear(_ animated: Bool) {
-            ViewUtils.when(hasChild: self.view) { self.onAppear?($0) }
-            
-            super.viewDidAppear(animated)
-        }
-    }
-    
     internal static var shared = ColorPickerChooser()
     
     private var cancellable: AnyCancellable? = nil
-    private var pickerView: InternalPicker?
+    private var pickerView: UIColorPickerViewController?
     private var background: UIView?
     
     private var firstViewController: UIViewController? {
         guard let root = ViewUtils.safeKeyWindow?.rootViewController else { return nil }
-        return root.presentedViewController ?? root.navigationController?.topViewController
+        return root.presentedViewController ?? root.navigationController?.topViewController ?? root
     }
     
-    public func presentColorPicker(color: Color, offsetY: CGFloat, onUpdate: @escaping (Color) -> Void) {
+    public func presentColorPicker(on: UIViewController? = nil, color: Color, offsetY: CGFloat, onUpdate: @escaping (Color) -> Void) {
         guard pickerView == nil else { closeChooser(); return }
-        let picker = InternalPicker()
+        let picker = UIColorPickerViewController()
         self.pickerView = picker
         picker.selectedColor = UIColor(color)
 
@@ -69,7 +58,7 @@ private class ColorPickerChooser {
                 }
             }
 
-        guard let viewController = firstViewController else { return }
+        guard let viewController = on ?? firstViewController else { return }
         viewController.view.addSubview(picker.view)
         viewController.addChild(picker)
         
@@ -82,8 +71,8 @@ private class ColorPickerChooser {
         } else { // above mid-screen
             picker.view.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: offsetY).isActive = true
         }
-
-        picker.onAppear = {[weak self] view in
+        
+        ViewUtils.when(hasChild: picker.view) {[weak self] view in
             guard let self = self else { return }
             
             // background
