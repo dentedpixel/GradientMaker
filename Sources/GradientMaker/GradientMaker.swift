@@ -77,7 +77,7 @@ private class ColorPickerChooser {
             
             // background
             let background = UIView()
-            background.backgroundColor = .white
+            background.backgroundColor = .systemBackground
             background.layer.borderWidth = 2
             background.layer.borderColor = UIColor.systemGray.cgColor
             viewController.view.insertSubview(background, belowSubview: picker.view)
@@ -95,7 +95,7 @@ private class ColorPickerChooser {
                         
             let closeButton = UIButton(type: .close)
             closeButton.isUserInteractionEnabled = true
-            closeButton.backgroundColor = .white
+            closeButton.backgroundColor = .systemBackground
             closeButton.addTarget(self, action: #selector(self.closeChooser), for: .touchUpInside)
             view.addSubview(closeButton)
 
