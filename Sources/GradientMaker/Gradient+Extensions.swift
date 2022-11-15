@@ -35,7 +35,7 @@ extension Gradient {
 }
 
 extension UIColor {
-    func blend(with color: UIColor, amt: CGFloat) -> UIColor {
+    public func blend(with color: UIColor, amt: CGFloat) -> UIColor {
         var fromRed :CGFloat = 0
         var fromGreen :CGFloat = 0
         var fromBlue :CGFloat = 0

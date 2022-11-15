@@ -77,7 +77,9 @@ private class ColorPickerChooser {
             
             // background
             let background = UIView()
-            background.backgroundColor = .black.withAlphaComponent(0.5)
+            background.backgroundColor = .white
+            background.layer.borderWidth = 2
+            background.layer.borderColor = UIColor.systemGray.cgColor
             viewController.view.insertSubview(background, belowSubview: picker.view)
 
             background.translatesAutoresizingMaskIntoConstraints = false
@@ -98,8 +100,8 @@ private class ColorPickerChooser {
             view.addSubview(closeButton)
 
             closeButton.translatesAutoresizingMaskIntoConstraints = false
-            closeButton.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-            closeButton.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+            closeButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 2).isActive = true
+            closeButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -2).isActive = true
             closeButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
             closeButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
         }
