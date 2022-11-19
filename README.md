@@ -1,4 +1,4 @@
-# Gradient Maker
+# SwiftUI Gradient Maker
 
 Gradient Maker is a SwiftUI Control for adjusting gradients
 
