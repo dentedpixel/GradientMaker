@@ -15,11 +15,11 @@ GradientMaker is a SwiftUI Control for adjusting gradients
   </tr>
 </table>
 
-Preview the control by [downloading the Dented Nails app]([https://apps.apple.com/us/app/dented-nails/id1529866818) on the Apple App Store!
+Preview the control by [downloading the Dented Nails app](https://apps.apple.com/us/app/dented-nails/id1529866818) on the Apple App Store!
 
 Dented Nails is a augmented reality app that allows you to create custom nail art and preview how it would look on your own hand!
 
-<img src="https://user-images.githubusercontent.com/3518657/202859455-7b39c8bd-3cb8-436b-ac84-4fd989a036fd.png" width="30%" alt="Download from iOS App Store Button" />
+<a href="https://apps.apple.com/us/app/dented-nails/id1529866818"><img src="https://user-images.githubusercontent.com/3518657/202859455-7b39c8bd-3cb8-436b-ac84-4fd989a036fd.png" width="30%" alt="Download from iOS App Store Button" /></a>
 
 **Coming Soon!**
 - Add/Subtract additional colors
