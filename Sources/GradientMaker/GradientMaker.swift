@@ -66,7 +66,7 @@ private class ColorPickerChooser {
         picker.view.leftAnchor.constraint(equalTo: viewController.view.leftAnchor).isActive = true
         picker.view.rightAnchor.constraint(equalTo: viewController.view.rightAnchor).isActive = true
         picker.view.heightAnchor.constraint(equalToConstant: 650).isActive = true
-        if offsetY > UIScreen.main.bounds.size.height * 0.5 { // below mid-screen
+        if let on = on, offsetY > on.view.frame.size.height * 0.5 { // below mid-screen
             picker.view.topAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
         } else { // above mid-screen
             picker.view.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: offsetY).isActive = true
