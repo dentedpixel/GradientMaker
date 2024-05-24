@@ -63,13 +63,12 @@ private class ColorPickerChooser {
         viewController.addChild(picker)
         
         picker.view.translatesAutoresizingMaskIntoConstraints = false
-        picker.view.leftAnchor.constraint(equalTo: viewController.view.leftAnchor).isActive = true
-        picker.view.rightAnchor.constraint(equalTo: viewController.view.rightAnchor).isActive = true
-        picker.view.heightAnchor.constraint(equalToConstant: 650).isActive = true
-        if let on = on, offsetY > on.view.frame.size.height * 0.5 { // below mid-screen
-            picker.view.topAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
+        picker.view.widthAnchor.constraint(equalToConstant: 500).isActive = true
+        picker.view.heightAnchor.constraint(equalToConstant: 700).isActive = true
+        if offsetY > viewController.view.frame.size.height * 0.5 { // below mid-screen
+            picker.view.bottomAnchor.constraint(equalTo: viewController.view.topAnchor, constant: offsetY).isActive = true
         } else { // above mid-screen
-            picker.view.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: offsetY).isActive = true
+            picker.view.topAnchor.constraint(equalTo: viewController.view.topAnchor, constant: offsetY + 20).isActive = true
         }
         
         ViewUtils.when(hasChild: picker.view) {[weak self] view in
@@ -77,9 +76,11 @@ private class ColorPickerChooser {
             
             // background
             let background = UIView()
-            background.backgroundColor = .systemBackground
+            background.backgroundColor = .systemGray
             background.layer.borderWidth = 2
             background.layer.borderColor = UIColor.systemGray.cgColor
+            background.layer.cornerRadius = 20
+            background.layer.masksToBounds = true
             viewController.view.insertSubview(background, belowSubview: picker.view)
 
             background.translatesAutoresizingMaskIntoConstraints = false
@@ -104,6 +105,8 @@ private class ColorPickerChooser {
             closeButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -2).isActive = true
             closeButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
             closeButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+            closeButton.layer.cornerRadius = 20
+            closeButton.layer.masksToBounds = true
         }
     }
     
@@ -202,7 +205,13 @@ public struct GradientMaker: View {
 
 struct GradientPickerView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
+        VStack {
+            GradientMaker(stops: [
+                Gradient.Stop(color: Color.red, location: 0.0),
+                Gradient.Stop(color: Color.yellow, location: 1.0)],
+                               onUpdate: { _ in })
+            Spacer(minLength: 400)
+            Spacer()
             GradientMaker(stops: [
                 Gradient.Stop(color: Color.red, location: 0.0),
                 Gradient.Stop(color: Color.yellow, location: 1.0)],
